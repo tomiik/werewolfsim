@@ -8,6 +8,7 @@ var Player = (function () {
         this.type = type;
         this.id = count;
         this.whitelist = [];
+        this.partner = -1;
         count++;
     }
     Player.prototype.getId = function () {
@@ -69,6 +70,9 @@ var Player = (function () {
                 return target;
             }
         }
+    };
+    Player.prototype.setPartner = function (target) {
+        this.partner = target;
     };
     Player.prototype.say = function (act, target) {
         if (silent != true) {

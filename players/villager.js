@@ -163,3 +163,32 @@ var ToughGuy = (function (_super) {
     return ToughGuy;
 }(Villager));
 exports.ToughGuy = ToughGuy;
+var Cupid = (function (_super) {
+    __extends(Cupid, _super);
+    function Cupid() {
+        var _this = _super.call(this, enum_1.PlayerType.Cupid) || this;
+        _this.madeCouple = false;
+        return _this;
+    }
+    Cupid.prototype.action = function (players) {
+        if (this.madeCouple == false) {
+            this.makeCouple(players);
+            this.madeCouple = true;
+        }
+    };
+    Cupid.prototype.makeCouple = function (players) {
+        while (true) {
+            var target1 = this.pickTarget(players);
+            var target2 = this.pickTarget(players);
+            console.log("cupid1:" + target1);
+            console.log("cupid2:" + target2);
+            if (target1 != target2 && target1 != this.getId() && target2 != this.getId()) {
+                players[target1].setPartner(target2);
+                players[target2].setPartner(target1);
+                return;
+            }
+        }
+    };
+    return Cupid;
+}(Villager));
+exports.Cupid = Cupid;

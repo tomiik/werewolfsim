@@ -53,7 +53,7 @@ var GameMaster = (function () {
     GameMaster.prototype.createPlayers = function (no_of_wolves, no_of_villagers) {
         var no_of_players = no_of_wolves + no_of_villagers;
         this.createWolves(no_of_wolves);
-        this.players_queue = [new villager_1.Doctor(), new villager_1.Cop(), new villager_1.Diseased(), new villager_1.Vigilante(), new villager_1.Witch(), new wolf_1.Rogue(), new villager_1.ToughGuy()];
+        this.players_queue = [new villager_1.Doctor(), new villager_1.Cop(), new villager_1.Diseased(), new villager_1.Vigilante(), new villager_1.Witch(), new wolf_1.Rogue(), new villager_1.ToughGuy(), new villager_1.Cupid()];
         this.createVillagers(no_of_villagers);
         this.initializePlayers();
     };
@@ -149,8 +149,13 @@ var GameMaster = (function () {
             }
         }
         votedScore.sort(function (a, b) { return b[1] - a[1]; });
-        console.log("player" + this.players[votedScore[0][0]].getId() + "[" + enum_1.PlayerType[this.players[votedScore[0][0]].getType()] + "] was executed.");
-        this.players[votedScore[0][0]].killed();
+        var target = votedScore[0][0];
+        console.log("player" + this.players[target].getId() + "[" + enum_1.PlayerType[this.players[target].getType()] + "] was executed.");
+        this.players[target].killed();
+        if (this.players[target].partner > 0) {
+            console.log("Player" + this.players[this.players[target].partner].getId() + "[" + enum_1.PlayerType[this.players[target].getType()] + "] was dead.");
+            this.players[this.players[target].partner].killed();
+        }
         return votedScore;
     };
     GameMaster.prototype.statusUpdate = function () {
@@ -159,6 +164,10 @@ var GameMaster = (function () {
             if (this.players[i].getStatus() == enum_1.PlayerStatus.Attacked) {
                 console.log("Player" + this.players[i].getId() + "[" + enum_1.PlayerType[this.players[i].getType()] + "] was killed.");
                 this.players[i].killed();
+                if (this.players[i].partner > 0) {
+                    console.log("Player" + this.players[this.players[i].partner].getId() + "[" + enum_1.PlayerType[this.players[this.players[i].partner].getType()] + "] was dead.");
+                    this.players[this.players[i].partner].killed();
+                }
             }
         }
     };

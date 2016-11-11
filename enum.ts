@@ -8,7 +8,8 @@ enum PlayerType {
     Cop,
     Diseased,
     Vigilante,
-    ToughGuy
+    ToughGuy,
+    Cupid
 }
 
 enum PlayerStatus {

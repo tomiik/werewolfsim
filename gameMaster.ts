@@ -1,5 +1,5 @@
 import {PlayerType, PlayerStatus, GameStatus} from "./enum"
-import {NormalVillager,Doctor, Cop, Diseased, Vigilante, Witch, ToughGuy} from "./players/villager"
+import {NormalVillager,Doctor, Cop, Diseased, Vigilante, Witch, ToughGuy, Cupid} from "./players/villager"
 import {NormalWolf, Rogue} from "./players/wolf"
 
 var log_CheckStatus = true;
@@ -58,7 +58,7 @@ export default class GameMaster {
 
     this.createWolves(no_of_wolves);
 
-    this.players_queue = [new Doctor(), new Cop(), new Diseased(), new Vigilante(), new Witch(), new Rogue(), new ToughGuy()];
+    this.players_queue = [new Doctor(), new Cop(), new Diseased(), new Vigilante(), new Witch(), new Rogue(), new ToughGuy(), new Cupid()];
     this.createVillagers(no_of_villagers);
 
     this.initializePlayers();
@@ -154,9 +154,14 @@ export default class GameMaster {
       }
     }
     votedScore.sort(function(a,b){return b[1] - a[1]})
+    var target = votedScore[0][0];
+    console.log("player" + this.players[target].getId() + "[" + PlayerType[this.players[target].getType()] + "] was executed.");
+    this.players[target].killed();
+    if(this.players[target].partner > 0){
+      console.log("Player" + this.players[this.players[target].partner].getId() + "[" + PlayerType[this.players[target].getType()] + "] was dead." )
+      this.players[this.players[target].partner].killed();
+    }
 
-    console.log("player" + this.players[votedScore[0][0]].getId() + "[" + PlayerType[this.players[votedScore[0][0]].getType()] + "] was executed.");
-    this.players[votedScore[0][0]].killed();
 
     return votedScore;
   }
@@ -166,6 +171,10 @@ export default class GameMaster {
       if(this.players[i].getStatus() == PlayerStatus.Attacked){
         console.log("Player" + this.players[i].getId() + "[" + PlayerType[this.players[i].getType()] + "] was killed." )
         this.players[i].killed();
+        if(this.players[i].partner > 0){
+          console.log("Player" + this.players[this.players[i].partner].getId() + "[" + PlayerType[this.players[this.players[i].partner].getType()] + "] was dead." )
+          this.players[this.players[i].partner].killed();
+        }
       }
     }
   }

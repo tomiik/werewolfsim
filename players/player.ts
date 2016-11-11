@@ -7,11 +7,14 @@ export default class Player {
   private type: PlayerType;
   private id: number;
   public whitelist;
+  private partner: number;
+
   constructor(type){
     this.status = PlayerStatus.Healthy;
     this.type = type;
     this.id = count;
     this.whitelist = [];
+    this.partner = -1;
     count++;
   }
   getId(){
@@ -74,6 +77,9 @@ export default class Player {
         return target;
       }
     }
+  }
+  setPartner(target){
+    this.partner = target;
   }
   say(act,target){
     if(silent != true){

@@ -144,4 +144,31 @@ class ToughGuy extends Villager{
   }
 }
 
-export {NormalVillager,Doctor,Cop, Diseased, Vigilante, Witch, ToughGuy}
+class Cupid extends Villager{
+  madeCouple: boolean;
+  constructor(){
+    super(PlayerType.Cupid);
+    this.madeCouple = false;
+  }
+  action(players){
+    if(this.madeCouple == false){
+      this.makeCouple(players)
+      this.madeCouple = true;
+    }
+  }
+  makeCouple(players){
+    while(true){
+      var target1 = this.pickTarget(players);
+      var target2 = this.pickTarget(players);
+      console.log("cupid1:" + target1);
+      console.log("cupid2:" + target2);
+      if(target1 != target2 && target1 != this.getId() && target2 != this.getId()){
+        players[target1].setPartner(target2);
+        players[target2].setPartner(target1);
+        return;
+      }
+    }
+  }
+}
+
+export {NormalVillager,Doctor,Cop, Diseased, Vigilante, Witch, ToughGuy, Cupid}
