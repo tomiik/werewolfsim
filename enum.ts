@@ -8,11 +8,13 @@ enum PlayerType {
     Cop,
     Diseased,
     Vigilante,
+    ToughGuy
 }
 
 enum PlayerStatus {
   Healthy = 1,
   Attacked,
+  Dying,
   Dead,
 }
 

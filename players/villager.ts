@@ -125,4 +125,23 @@ class Witch extends Doctor{
   }
 }
 
-export {NormalVillager,Doctor,Cop, Diseased, Vigilante, Witch}
+class ToughGuy extends Villager{
+  energy: number;
+  constructor(){
+    super(PlayerType.ToughGuy);
+    this.energy = 1;
+  }
+  action(){
+    if(this.getStatus() == PlayerStatus.Dying){
+      if(this.energy <= 0){
+        this.setStatus(PlayerStatus.Attacked);
+      }
+      this.energy--;
+    }
+  }
+  attacked(){
+    this.setStatus(PlayerStatus.Dying);
+  }
+}
+
+export {NormalVillager,Doctor,Cop, Diseased, Vigilante, Witch, ToughGuy}

@@ -142,3 +142,24 @@ var Witch = (function (_super) {
     return Witch;
 }(Doctor));
 exports.Witch = Witch;
+var ToughGuy = (function (_super) {
+    __extends(ToughGuy, _super);
+    function ToughGuy() {
+        var _this = _super.call(this, enum_1.PlayerType.ToughGuy) || this;
+        _this.energy = 1;
+        return _this;
+    }
+    ToughGuy.prototype.action = function () {
+        if (this.getStatus() == enum_1.PlayerStatus.Dying) {
+            if (this.energy <= 0) {
+                this.setStatus(enum_1.PlayerStatus.Attacked);
+            }
+            this.energy--;
+        }
+    };
+    ToughGuy.prototype.attacked = function () {
+        this.setStatus(enum_1.PlayerStatus.Dying);
+    };
+    return ToughGuy;
+}(Villager));
+exports.ToughGuy = ToughGuy;

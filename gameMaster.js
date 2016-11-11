@@ -53,7 +53,7 @@ var GameMaster = (function () {
     GameMaster.prototype.createPlayers = function (no_of_wolves, no_of_villagers) {
         var no_of_players = no_of_wolves + no_of_villagers;
         this.createWolves(no_of_wolves);
-        this.players_queue = [new villager_1.Doctor(), new villager_1.Cop(), new villager_1.Diseased(), new villager_1.Vigilante(), new villager_1.Witch(), new wolf_1.Rogue()];
+        this.players_queue = [new villager_1.Doctor(), new villager_1.Cop(), new villager_1.Diseased(), new villager_1.Vigilante(), new villager_1.Witch(), new wolf_1.Rogue(), new villager_1.ToughGuy()];
         this.createVillagers(no_of_villagers);
         this.initializePlayers();
     };

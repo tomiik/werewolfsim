@@ -20,15 +20,18 @@ var Player = (function () {
         return this.status;
     };
     Player.prototype.attacked = function () {
-        this.status = enum_1.PlayerStatus.Attacked;
+        this.setStatus(enum_1.PlayerStatus.Attacked);
     };
     Player.prototype.killed = function () {
-        this.status = enum_1.PlayerStatus.Dead;
+        this.setStatus(enum_1.PlayerStatus.Dead);
     };
     Player.prototype.cured = function () {
         if (this.status == enum_1.PlayerStatus.Attacked) {
-            this.status = enum_1.PlayerStatus.Healthy;
+            this.setStatus(enum_1.PlayerStatus.Healthy);
         }
+    };
+    Player.prototype.setStatus = function (status) {
+        this.status = status;
     };
     Player.prototype.action = function (players, lastVoteResult) {
     };

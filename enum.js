@@ -10,13 +10,15 @@ var PlayerType;
     PlayerType[PlayerType["Cop"] = 7] = "Cop";
     PlayerType[PlayerType["Diseased"] = 8] = "Diseased";
     PlayerType[PlayerType["Vigilante"] = 9] = "Vigilante";
+    PlayerType[PlayerType["ToughGuy"] = 10] = "ToughGuy";
 })(PlayerType || (PlayerType = {}));
 exports.PlayerType = PlayerType;
 var PlayerStatus;
 (function (PlayerStatus) {
     PlayerStatus[PlayerStatus["Healthy"] = 1] = "Healthy";
     PlayerStatus[PlayerStatus["Attacked"] = 2] = "Attacked";
-    PlayerStatus[PlayerStatus["Dead"] = 3] = "Dead";
+    PlayerStatus[PlayerStatus["Dying"] = 3] = "Dying";
+    PlayerStatus[PlayerStatus["Dead"] = 4] = "Dead";
 })(PlayerStatus || (PlayerStatus = {}));
 exports.PlayerStatus = PlayerStatus;
 var GameStatus;

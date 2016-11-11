@@ -24,15 +24,18 @@ export default class Player {
     return this.status;
   }
   attacked(){
-    this.status = PlayerStatus.Attacked;
+    this.setStatus(PlayerStatus.Attacked);
   }
   killed(){
-    this.status = PlayerStatus.Dead;
+    this.setStatus(PlayerStatus.Dead);
   }
   cured(){
     if(this.status == PlayerStatus.Attacked){
-      this.status = PlayerStatus.Healthy;
+      this.setStatus(PlayerStatus.Healthy);
     }
+  }
+  setStatus(status){
+    this.status = status;
   }
   action(players, lastVoteResult){
 
