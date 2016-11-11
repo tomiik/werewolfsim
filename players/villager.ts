@@ -1,4 +1,4 @@
-import {PlayerType} from "../enum"
+import {PlayerType, PlayerStatus} from "../enum"
 import Player from "./player"
 
 class Villager extends Player{
@@ -9,19 +9,19 @@ class Villager extends Player{
 
 class NormalVillager extends Villager{
   constructor(){
-    super(PlayerType.NormalVillager)
+    super(PlayerType.NormalVillager);
   }
 }
 
 class Doctor extends Villager{
-  constructor(){
-    super(PlayerType.Doctor);
+  constructor(playerType = PlayerType.Doctor){
+    super(playerType);
   }
   action(players, lastVoteResult){
-    this.cure(players);
-  }
-  cure(players){
     var target = this.pickTarget(players)
+    this.cure(players, target);
+  }
+  cure(players, target){
     players[target].cured();
     this.say("cure", target);
   }
@@ -70,7 +70,7 @@ class Diseased extends Villager{
 
 class Vigilante extends Villager{
   constructor(){
-    super(PlayerType.Vigilante)
+    super(PlayerType.Vigilante);
   }
   action(players, lastVoteResult){
       this.kill(players, lastVoteResult)
@@ -85,4 +85,44 @@ class Vigilante extends Villager{
   }
 }
 
-export {NormalVillager,Doctor,Cop, Diseased, Vigilante}
+class Witch extends Doctor{
+  poison:number;
+  potion:number;
+  constructor(){
+    super(PlayerType.Witch);
+    this.poison = 1;
+    this.potion = 1;
+  }
+  action(players, lastVoteResult){
+    var dice = Math.floor(Math.random() * 6);
+    if(dice == 1){
+      if(this.poison > 0){
+        for(let i = 1; i < lastVoteResult.length; i++){
+          if(lastVoteResult[i][0].getStatus != PlayerStatus.Dead){
+            this.usePoison(players, i);
+            return;
+          }
+        }
+      }
+    }
+    else if(dice == 2){
+      if(this.potion > 0){
+        for(let i = lastVoteResult.length - 1; i > 0; i--){
+          if(lastVoteResult[i][0].getStatus != PlayerStatus.Dead){
+            this.usePotion(players, i);
+            return;
+          }
+        }
+      }
+    }
+  }
+  usePoison(players, target){
+    players[target].attacked();
+    this.say("attacked", target);
+  }
+  usePotion(players, target){
+    this.cure(players,target);
+  }
+}
+
+export {NormalVillager,Doctor,Cop, Diseased, Vigilante, Witch}

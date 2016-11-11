@@ -23,14 +23,15 @@ var NormalVillager = (function (_super) {
 exports.NormalVillager = NormalVillager;
 var Doctor = (function (_super) {
     __extends(Doctor, _super);
-    function Doctor() {
-        return _super.call(this, enum_1.PlayerType.Doctor) || this;
+    function Doctor(playerType) {
+        if (playerType === void 0) { playerType = enum_1.PlayerType.Doctor; }
+        return _super.call(this, playerType) || this;
     }
     Doctor.prototype.action = function (players, lastVoteResult) {
-        this.cure(players);
-    };
-    Doctor.prototype.cure = function (players) {
         var target = this.pickTarget(players);
+        this.cure(players, target);
+    };
+    Doctor.prototype.cure = function (players, target) {
         players[target].cured();
         this.say("cure", target);
     };
@@ -100,3 +101,44 @@ var Vigilante = (function (_super) {
     return Vigilante;
 }(Villager));
 exports.Vigilante = Vigilante;
+var Witch = (function (_super) {
+    __extends(Witch, _super);
+    function Witch() {
+        var _this = _super.call(this, enum_1.PlayerType.Witch) || this;
+        _this.poison = 1;
+        _this.potion = 1;
+        return _this;
+    }
+    Witch.prototype.action = function (players, lastVoteResult) {
+        var dice = Math.floor(Math.random() * 6);
+        if (dice == 1) {
+            if (this.poison > 0) {
+                for (var i = 1; i < lastVoteResult.length; i++) {
+                    if (lastVoteResult[i][0].getStatus != enum_1.PlayerStatus.Dead) {
+                        this.usePoison(players, i);
+                        return;
+                    }
+                }
+            }
+        }
+        else if (dice == 2) {
+            if (this.potion > 0) {
+                for (var i = lastVoteResult.length - 1; i > 0; i--) {
+                    if (lastVoteResult[i][0].getStatus != enum_1.PlayerStatus.Dead) {
+                        this.usePotion(players, i);
+                        return;
+                    }
+                }
+            }
+        }
+    };
+    Witch.prototype.usePoison = function (players, target) {
+        players[target].attacked();
+        this.say("attacked", target);
+    };
+    Witch.prototype.usePotion = function (players, target) {
+        this.cure(players, target);
+    };
+    return Witch;
+}(Doctor));
+exports.Witch = Witch;

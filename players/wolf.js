@@ -16,17 +16,30 @@ var Wolf = (function (_super) {
     Wolf.prototype.setLeader = function () {
         this.leader = true;
     };
-    Wolf.prototype.kill = function (players) {
-        while (true) {
-            var target = this.pickTarget(players);
-            if (this.whitelist[target] != true) {
-                players[target].attacked();
-                this.say("attack", target);
-                return true;
+    Wolf.prototype.kill = function (players, lastVoteResult) {
+        var target;
+        if (lastVoteResult.length > 0) {
+            for (var i = lastVoteResult.length - 1; i > 0; i--) {
+                target = lastVoteResult[i][0];
+                if (this.whitelist[target] != true) {
+                    players[target].attacked();
+                    this.say("attack", target);
+                    return true;
+                }
+            }
+        }
+        else {
+            while (true) {
+                target = this.pickTarget(players);
+                if (this.whitelist[target] != true) {
+                    players[target].attacked();
+                    this.say("attack", target);
+                    return true;
+                }
             }
         }
     };
-    Wolf.prototype.action = function (players) {
+    Wolf.prototype.action = function (players, lastVoteResult) {
     };
     return Wolf;
 }(player_1.default));
@@ -44,9 +57,9 @@ var NormalWolf = (function (_super) {
             }
         }
     };
-    NormalWolf.prototype.action = function (players) {
+    NormalWolf.prototype.action = function (players, lastVoteResult) {
         if (this.leader == true) {
-            this.kill(players);
+            this.kill(players, lastVoteResult);
         }
     };
     return NormalWolf;
@@ -57,8 +70,8 @@ var Rogue = (function (_super) {
     function Rogue() {
         return _super.call(this, enum_1.PlayerType.Rogue) || this;
     }
-    Rogue.prototype.action = function (players) {
-        this.kill(players);
+    Rogue.prototype.action = function (players, lastVoteResult) {
+        this.kill(players, lastVoteResult);
     };
     return Rogue;
 }(Wolf));

@@ -1,5 +1,5 @@
 import {PlayerType, PlayerStatus, GameStatus} from "./enum"
-import {NormalVillager,Doctor, Cop, Diseased, Vigilante} from "./players/villager"
+import {NormalVillager,Doctor, Cop, Diseased, Vigilante, Witch} from "./players/villager"
 import {NormalWolf, Rogue} from "./players/wolf"
 
 var log_CheckStatus = true;
@@ -58,7 +58,7 @@ export default class GameMaster {
 
     this.createWolves(no_of_wolves);
 
-    this.players_queue = [new Doctor(), new Cop(), new Diseased(), new Vigilante(), new Rogue()];
+    this.players_queue = [new Doctor(), new Cop(), new Diseased(), new Vigilante(), new Witch(), new Rogue()];
     this.createVillagers(no_of_villagers);
 
     this.initializePlayers();

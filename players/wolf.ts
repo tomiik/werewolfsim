@@ -10,18 +10,30 @@ export default class Wolf extends Player{
   setLeader(){
     this.leader = true;
   }
-  kill(players){
-    while(true){
-      var target = this.pickTarget(players);
-
-      if(this.whitelist[target] != true){
+  kill(players, lastVoteResult){
+    var target;
+    if(lastVoteResult.length > 0){
+      for(let i = lastVoteResult.length - 1; i > 0; i--){
+        target = lastVoteResult[i][0];
+        if(this.whitelist[target] != true){
           players[target].attacked();
           this.say("attack", target)
           return true;
+        }
+      }
+    }else{
+      while(true){
+        target = this.pickTarget(players);
+
+        if(this.whitelist[target] != true){
+            players[target].attacked();
+            this.say("attack", target)
+            return true;
+        }
       }
     }
   }
-  action(players){
+  action(players, lastVoteResult){
   }
 }
 
@@ -36,9 +48,9 @@ class NormalWolf extends Wolf{
       }
     }
   }
-  action(players){
+  action(players, lastVoteResult){
     if(this.leader == true){
-      this.kill(players);
+      this.kill(players, lastVoteResult);
     }
   }
 }
@@ -47,8 +59,8 @@ class Rogue extends Wolf{
   constructor(){
     super(PlayerType.Rogue);
   }
-  action(players){
-    this.kill(players);
+  action(players, lastVoteResult){
+    this.kill(players, lastVoteResult);
   }
 
 }
