@@ -40,15 +40,6 @@ var NormalWolf = (function (_super) {
     function NormalWolf() {
         return _super.call(this, enum_1.PlayerType.NormalWolf) || this;
     }
-    NormalWolf.prototype.accuse = function (players) {
-        var target;
-        while (true) {
-            target = this.pickTarget(players);
-            if (players[target].getType != enum_1.PlayerType.NormalWolf) {
-                return target;
-            }
-        }
-    };
     NormalWolf.prototype.identifyWolves = function (players) {
         for (var i = 0; i < players.length; i++) {
             if (players[i].getType() == enum_1.PlayerType.NormalWolf) {

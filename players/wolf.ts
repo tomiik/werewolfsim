@@ -32,15 +32,6 @@ class NormalWolf extends Wolf{
   constructor(){
     super(PlayerType.NormalWolf)
   }
-  accuse(players){
-    var target;
-    while(true){
-      target = this.pickTarget(players);
-      if(players[target].getType != PlayerType.NormalWolf){
-        return target;
-      }
-    }
-  }
   identifyWolves(players){
     for(let i = 0; i < players.length; i++){
       if(players[i].getType() == PlayerType.NormalWolf){

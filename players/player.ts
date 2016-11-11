@@ -37,10 +37,17 @@ export default class Player {
   }
   accuse(players){
     var target;
+    for(let i = 0; i < players.length; i++){
+      if(this.whitelist[i] == false){
+        this.say("accuse", i);
+        return i;
+      }
+    }
     while(true){
       target = this.pickTarget(players);
       if(target != this.id){
-        return target
+        this.say("accuse", target);
+        return target;
       }
     }
   }
@@ -48,14 +55,10 @@ export default class Player {
     var target;
     for(let i = 0; i < accuseResult.length; i++){
       target = accuseResult[i][0];
-
-      if(this.whitelist[target] != true && players[i].getStatus() != PlayerStatus.Dead){
-        //console.log(this.id + ":vote:"+ target + "whitelist:" + this.whitelist[target]);
+      if(this.whitelist[target] != true && players[target].getStatus() != PlayerStatus.Dead){
+        this.say("vote", target);
         return target
       }
-    }
-    while(true){
-
     }
   }
   pickTarget(players){
@@ -68,7 +71,7 @@ export default class Player {
     }
   }
   say(act,target){
-    console.log(PlayerType[this.type] + " " + act + " player" + target);
+    console.log(this.getId() + ":" + PlayerType[this.type] + " " + act + " player" + target);
   }
   clearWhitelist(length){
     //console.log(this.id + "clearWhitelist()")

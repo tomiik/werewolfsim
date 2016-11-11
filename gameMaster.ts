@@ -1,14 +1,16 @@
 import {PlayerType, PlayerStatus, GameStatus} from "./enum"
-import {NormalVillager,Doctor} from "./players/villager"
+import {NormalVillager,Doctor, Cop} from "./players/villager"
 import {NormalWolf} from "./players/wolf"
 
-var players = [];
 
 export default class GameMaster {
+  lastVoteResult = [];
+  players = [];
   constructor(){
 
   }
   play(){
+    var lastVoteResult = [];
     var gamestatus = GameStatus.Not_End;
     for(let i = 0; i < 10; i++){
       console.log("============== day " + i + "==============")
@@ -39,38 +41,38 @@ export default class GameMaster {
   }
   checkPlayers(){
     console.log("----------------------------------------------")
-    for(let i = 0; i < players.length; i++){
-      console.log(players[i].getId() +":" + PlayerType[players[i].getType()] + "\t: " + PlayerStatus[players[i].getStatus()]);
+    for(let i = 0; i < this.players.length; i++){
+      console.log(this.players[i].getId() +":" + PlayerType[this.players[i].getType()] + "\t: " + PlayerStatus[this.players[i].getStatus()]);
     }
     console.log("----------------------------------------------")
   }
   createPlayers(no_of_wolves, no_of_villagers){
     var no_of_players = no_of_wolves + no_of_villagers;
     for(var i = 0; i < no_of_wolves; i++){
-      players.push(new NormalWolf);
+      this.players.push(new NormalWolf);
     }
-    players.push(new Doctor);
-    players.push(new NormalVillager);
-    players.push(new NormalVillager);
-    players.push(new NormalVillager);
-    players.push(new NormalVillager);
-    players.push(new NormalVillager);
-    players.push(new NormalVillager);
-    players.push(new NormalVillager);
-    players.push(new NormalVillager);
-    players.push(new NormalVillager);
+    this.players.push(new Doctor);
+    this.players.push(new Cop);
+    this.players.push(new NormalVillager);
+    this.players.push(new NormalVillager);
+    this.players.push(new NormalVillager);
+    this.players.push(new NormalVillager);
+    this.players.push(new NormalVillager);
+    this.players.push(new NormalVillager);
+    this.players.push(new NormalVillager);
+    this.players.push(new NormalVillager);
 
-    for(var i = 0; i < players.length; i++){
-      players[i].clearWhitelist(no_of_players);
-      if(players[i].getType() == PlayerType.NormalWolf){
-        players[i].identifyWolves(players);
+    for(var i = 0; i < this.players.length; i++){
+      this.players[i].clearWhitelist(no_of_players);
+      if(this.players[i].getType() == PlayerType.NormalWolf){
+        this.players[i].identifyWolves(this.players);
       }
     }
   }
   selectWolfLeader(){
-    for(let i = 0; i < players.length; i++){
-      if(players[i].type == PlayerType.NormalWolf && players[i].getStatus() == PlayerStatus.Healthy){
-        players[i].setLeader();
+    for(let i = 0; i < this.players.length; i++){
+      if(this.players[i].type == PlayerType.NormalWolf && this.players[i].getStatus() == PlayerStatus.Healthy){
+        this.players[i].setLeader();
         return true;
       }
     }
@@ -80,8 +82,10 @@ export default class GameMaster {
     console.log("--night start")
     //wolf
     this.selectWolfLeader();
-    for(let i = 0; i < players.length; i++){
-      players[i].action(players);
+    for(let i = 0; i < this.players.length; i++){
+      if(this.players[i].getStatus() != PlayerStatus.Dead){
+        this.players[i].action(this.players);
+      }
     }
     console.log("--night end");
     this.statusUpdate();
@@ -90,20 +94,23 @@ export default class GameMaster {
     var accuseResult = this.accuse();
     console.log(accuseResult);
     var voteResult = this.vote(accuseResult);
-    console.log(voteResult);
+    //console.log(voteResult);
+    return voteResult;
   }
   accuse(){
     console.log("accuse()");
     var accuse;
     var accusedScore = [];
     //initialize accuse Score
-    for(let i = 0; i < players.length; i++){
+    for(let i = 0; i < this.players.length; i++){
       accusedScore[i] = [i,0];
     }
     //accuse
-    for(let i = 0; i < players.length; i++){
-      accuse = players[i].accuse(players);
-      accusedScore[accuse] = [accuse,accusedScore[accuse][1] + 1];
+    for(let i = 0; i < this.players.length; i++){
+      if(this.players[i].getStatus() != PlayerStatus.Dead ){
+        accuse = this.players[i].accuse(this.players);
+        accusedScore[accuse] = [accuse,accusedScore[accuse][1] + 1];
+      }
     }
     accusedScore.sort(function(a,b){return b[1] - a[1]})
     return accusedScore;
@@ -113,27 +120,29 @@ export default class GameMaster {
     var vote;
     var votedScore = [];
     //initialize accuse Score
-    for(let i = 0; i < players.length; i++){
+    for(let i = 0; i < this.players.length; i++){
       votedScore[i] = [i,0];
     }
 
     //vote
-    for(let i = 0; i < players.length; i++){
-      vote = players[i].vote(accusedResult,players);
-      votedScore[vote] = [vote,votedScore[vote][1] + 1];
+    for(let i = 0; i < this.players.length; i++){
+      if(this.players[i].getStatus() != PlayerStatus.Dead ){
+        vote = this.players[i].vote(accusedResult, this.players);
+        votedScore[vote] = [vote,votedScore[vote][1] + 1];
+      }
     }
     votedScore.sort(function(a,b){return b[1] - a[1]})
 
-    console.log("player" + players[votedScore[0][0]].getId() + "[" + players[votedScore[0][0]].getType() + "] was executed.");
-    players[votedScore[0][0]].killed();
+    console.log("player" + this.players[votedScore[0][0]].getId() + "[" + this.players[votedScore[0][0]].getType() + "] was executed.");
+    this.players[votedScore[0][0]].killed();
 
     return votedScore;
   }
   statusUpdate(){
-    for(let i = 0; i < players.length; i++){
-      if(players[i].getStatus() == PlayerStatus.Attacked){
-        console.log("Player" + players[i].getId() + "[" + PlayerType[players[i].getType()] + "] was killed." )
-        players[i].killed();
+    for(let i = 0; i < this.players.length; i++){
+      if(this.players[i].getStatus() == PlayerStatus.Attacked){
+        console.log("Player" + this.players[i].getId() + "[" + PlayerType[this.players[i].getType()] + "] was killed." )
+        this.players[i].killed();
       }
     }
   }
@@ -141,11 +150,11 @@ export default class GameMaster {
     var wolves = 0;
     var alives = 0;
     var result = GameStatus.Not_End;
-    for(let i = 0; i < players.length; i++){
-      if(players[i].getStatus() != PlayerStatus.Dead)
+    for(let i = 0; i < this.players.length; i++){
+      if(this.players[i].getStatus() != PlayerStatus.Dead)
       {
         alives++;
-        if(players[i].getType() == PlayerType.NormalWolf){
+        if(this.players[i].getType() == PlayerType.NormalWolf){
           wolves++;
         }
       }

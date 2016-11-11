@@ -15,7 +15,7 @@ class NormalVillager extends Villager{
 
 class Doctor extends Villager{
   constructor(){
-    super(PlayerType.Doctor)
+    super(PlayerType.Doctor);
   }
   action(players){
     this.cure(players);
@@ -27,4 +27,35 @@ class Doctor extends Villager{
   }
 }
 
-export {NormalVillager,Doctor}
+class Cop extends Villager{
+  constructor(){
+    super(PlayerType.Cop);
+  }
+  action(players){
+    this.identify(players);
+    console.log(PlayerType[this.getType()] + " whitelist:" + this.whitelist)
+  }
+  identify(players){
+    var count = 0;
+    while(true){
+      var target = this.pickTarget(players);
+      console.log(target + ":" + this.whitelist[target]);
+      if(this.whitelist[target] == undefined ){
+        if(players[target].getType() == PlayerType.NormalWolf){
+          this.whitelist[target] = false;
+        }else{
+          this.whitelist[target] = true;
+        }
+        this.say("identify", target)
+
+        return;
+      }
+      if(count > players.length){
+        return;
+      }
+      count++;
+    }
+  }
+}
+
+export {NormalVillager,Doctor,Cop}

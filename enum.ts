@@ -4,7 +4,8 @@ enum PlayerType {
     NormalVillager,
     Doctor,
     Witch,
-    LittleGirl
+    LittleGirl,
+    Cop,
 }
 
 enum PlayerStatus {

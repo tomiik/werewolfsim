@@ -33,9 +33,16 @@ var Player = (function () {
     };
     Player.prototype.accuse = function (players) {
         var target;
+        for (var i = 0; i < players.length; i++) {
+            if (this.whitelist[i] == false) {
+                this.say("accuse", i);
+                return i;
+            }
+        }
         while (true) {
             target = this.pickTarget(players);
             if (target != this.id) {
+                this.say("accuse", target);
                 return target;
             }
         }
@@ -44,12 +51,10 @@ var Player = (function () {
         var target;
         for (var i = 0; i < accuseResult.length; i++) {
             target = accuseResult[i][0];
-            if (this.whitelist[target] != true && players[i].getStatus() != enum_1.PlayerStatus.Dead) {
-                //console.log(this.id + ":vote:"+ target + "whitelist:" + this.whitelist[target]);
+            if (this.whitelist[target] != true && players[target].getStatus() != enum_1.PlayerStatus.Dead) {
+                this.say("vote", target);
                 return target;
             }
-        }
-        while (true) {
         }
     };
     Player.prototype.pickTarget = function (players) {
@@ -62,7 +67,7 @@ var Player = (function () {
         }
     };
     Player.prototype.say = function (act, target) {
-        console.log(enum_1.PlayerType[this.type] + " " + act + " player" + target);
+        console.log(this.getId() + ":" + enum_1.PlayerType[this.type] + " " + act + " player" + target);
     };
     Player.prototype.clearWhitelist = function (length) {
         //console.log(this.id + "clearWhitelist()")
