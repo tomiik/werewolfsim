@@ -33,20 +33,21 @@ class Cop extends Villager{
   }
   action(players){
     this.identify(players);
-    console.log(PlayerType[this.getType()] + " whitelist:" + this.whitelist)
+    //console.log(PlayerType[this.getType()] + " whitelist:" + this.whitelist)
+    this.say("whitelist", this.whitelist);
   }
   identify(players){
     var count = 0;
     while(true){
       var target = this.pickTarget(players);
-      console.log(target + ":" + this.whitelist[target]);
+      //console.log(target + ":" + this.whitelist[target]);
       if(this.whitelist[target] == undefined ){
         if(players[target].getType() == PlayerType.NormalWolf){
           this.whitelist[target] = false;
         }else{
           this.whitelist[target] = true;
         }
-        this.say("identify", target)
+        this.say("identify", target + "> " + PlayerType[players[target].getType()])
 
         return;
       }
@@ -58,4 +59,13 @@ class Cop extends Villager{
   }
 }
 
-export {NormalVillager,Doctor,Cop}
+class Diseased extends Villager{
+  constructor(){
+    super(PlayerType.Diseased);
+  }
+  attacked(){
+
+  }
+}
+
+export {NormalVillager,Doctor,Cop, Diseased}

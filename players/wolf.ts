@@ -39,7 +39,6 @@ class NormalWolf extends Wolf{
       }
     }
   }
-
 }
 
 export {NormalWolf}

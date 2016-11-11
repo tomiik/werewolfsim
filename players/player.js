@@ -1,6 +1,7 @@
 "use strict";
 var enum_1 = require("../enum");
 var count = 0;
+var silent = true;
 var Player = (function () {
     function Player(type) {
         this.status = enum_1.PlayerStatus.Healthy;
@@ -67,7 +68,10 @@ var Player = (function () {
         }
     };
     Player.prototype.say = function (act, target) {
-        console.log(this.getId() + ":" + enum_1.PlayerType[this.type] + " " + act + " player" + target);
+        if (silent != true) {
+            var message = this.getId() + ":" + enum_1.PlayerType[this.type] + " " + act + " player" + target;
+            console.log(message);
+        }
     };
     Player.prototype.clearWhitelist = function (length) {
         //console.log(this.id + "clearWhitelist()")

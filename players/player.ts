@@ -1,5 +1,7 @@
 import {PlayerType, PlayerStatus} from "../enum"
 var count = 0;
+const silent = true;
+
 export default class Player {
   private status: PlayerStatus;
   private type: PlayerType;
@@ -71,7 +73,10 @@ export default class Player {
     }
   }
   say(act,target){
-    console.log(this.getId() + ":" + PlayerType[this.type] + " " + act + " player" + target);
+    if(silent != true){
+      var message = this.getId() + ":" + PlayerType[this.type] + " " + act + " player" + target
+      console.log(message);
+    }
   }
   clearWhitelist(length){
     //console.log(this.id + "clearWhitelist()")

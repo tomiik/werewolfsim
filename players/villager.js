@@ -44,13 +44,14 @@ var Cop = (function (_super) {
     }
     Cop.prototype.action = function (players) {
         this.identify(players);
-        console.log(enum_1.PlayerType[this.getType()] + " whitelist:" + this.whitelist);
+        //console.log(PlayerType[this.getType()] + " whitelist:" + this.whitelist)
+        this.say("whitelist", this.whitelist);
     };
     Cop.prototype.identify = function (players) {
         var count = 0;
         while (true) {
             var target = this.pickTarget(players);
-            console.log(target + ":" + this.whitelist[target]);
+            //console.log(target + ":" + this.whitelist[target]);
             if (this.whitelist[target] == undefined) {
                 if (players[target].getType() == enum_1.PlayerType.NormalWolf) {
                     this.whitelist[target] = false;
@@ -58,7 +59,7 @@ var Cop = (function (_super) {
                 else {
                     this.whitelist[target] = true;
                 }
-                this.say("identify", target);
+                this.say("identify", target + "> " + enum_1.PlayerType[players[target].getType()]);
                 return;
             }
             if (count > players.length) {
@@ -70,3 +71,13 @@ var Cop = (function (_super) {
     return Cop;
 }(Villager));
 exports.Cop = Cop;
+var Diseased = (function (_super) {
+    __extends(Diseased, _super);
+    function Diseased() {
+        return _super.call(this, enum_1.PlayerType.Diseased) || this;
+    }
+    Diseased.prototype.attacked = function () {
+    };
+    return Diseased;
+}(Villager));
+exports.Diseased = Diseased;

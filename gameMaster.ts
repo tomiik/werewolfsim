@@ -1,11 +1,15 @@
 import {PlayerType, PlayerStatus, GameStatus} from "./enum"
-import {NormalVillager,Doctor, Cop} from "./players/villager"
+import {NormalVillager,Doctor, Cop, Diseased} from "./players/villager"
 import {NormalWolf} from "./players/wolf"
 
+var log_CheckStatus = false;
+var log_Accuse = false;
+var log_Vote = false;
 
 export default class GameMaster {
   lastVoteResult = [];
   players = [];
+  players_queue = [];
   constructor(){
 
   }
@@ -13,6 +17,7 @@ export default class GameMaster {
     var lastVoteResult = [];
     var gamestatus = GameStatus.Not_End;
     for(let i = 0; i < 10; i++){
+      console.log();
       console.log("============== day " + i + "==============")
       this.nightEvents();
       this.checkPlayers();
@@ -37,35 +42,48 @@ export default class GameMaster {
         return gamestatus;
       }
     }
-
   }
   checkPlayers(){
-    console.log("----------------------------------------------")
-    for(let i = 0; i < this.players.length; i++){
-      console.log(this.players[i].getId() +":" + PlayerType[this.players[i].getType()] + "\t: " + PlayerStatus[this.players[i].getStatus()]);
+    if(log_CheckStatus == true){
+      console.log("----------------------------------------------")
+      for(let i = 0; i < this.players.length; i++){
+        console.log(this.players[i].getId() +":" + PlayerType[this.players[i].getType()] + "\t: " + PlayerStatus[this.players[i].getStatus()]);
+
+      }
+      console.log("----------------------------------------------")
     }
-    console.log("----------------------------------------------")
   }
   createPlayers(no_of_wolves, no_of_villagers){
     var no_of_players = no_of_wolves + no_of_villagers;
-    for(var i = 0; i < no_of_wolves; i++){
-      this.players.push(new NormalWolf);
-    }
-    this.players.push(new Doctor);
-    this.players.push(new Cop);
-    this.players.push(new NormalVillager);
-    this.players.push(new NormalVillager);
-    this.players.push(new NormalVillager);
-    this.players.push(new NormalVillager);
-    this.players.push(new NormalVillager);
-    this.players.push(new NormalVillager);
-    this.players.push(new NormalVillager);
-    this.players.push(new NormalVillager);
 
+    this.createWolves(no_of_wolves);
+
+    this.players_queue = [new Doctor(), new Cop(), new Diseased()];
+    this.createVillagers(no_of_villagers);
+
+    this.initializePlayers();
+  }
+  initializePlayers(){
     for(var i = 0; i < this.players.length; i++){
-      this.players[i].clearWhitelist(no_of_players);
+      this.players[i].clearWhitelist(this.players.length);
       if(this.players[i].getType() == PlayerType.NormalWolf){
         this.players[i].identifyWolves(this.players);
+      }
+    }
+  }
+  createWolves(num){
+    for(let i = 0; i < num; i++){
+      this.players.push(new NormalWolf);
+    }
+
+  }
+  createVillagers(num){
+    for(let i = 0; i < num; i++){
+      if(this.players_queue.length > 0){
+        this.players.push(this.players_queue.shift())
+      }
+      else{
+        this.players.push(new NormalVillager);
       }
     }
   }
@@ -79,7 +97,7 @@ export default class GameMaster {
     return false;
   }
   nightEvents(){
-    console.log("--night start")
+    console.log("------------- Night -------------")
     //wolf
     this.selectWolfLeader();
     for(let i = 0; i < this.players.length; i++){
@@ -87,18 +105,22 @@ export default class GameMaster {
         this.players[i].action(this.players);
       }
     }
-    console.log("--night end");
     this.statusUpdate();
   }
   dayEvents(){
+    console.log("-------------  Day  -------------")
     var accuseResult = this.accuse();
-    console.log(accuseResult);
+
+    if(log_Accuse == true){console.log(accuseResult)}
     var voteResult = this.vote(accuseResult);
-    //console.log(voteResult);
+    if(log_Vote == true){console.log(voteResult)}
+
     return voteResult;
   }
   accuse(){
-    console.log("accuse()");
+    if(log_Accuse == true){
+      console.log("accuse()");
+    }
     var accuse;
     var accusedScore = [];
     //initialize accuse Score
@@ -116,7 +138,9 @@ export default class GameMaster {
     return accusedScore;
   }
   vote(accusedResult){
-    console.log("vote()");
+    if(log_Vote == true){
+      console.log("vote()");
+    }
     var vote;
     var votedScore = [];
     //initialize accuse Score
@@ -133,7 +157,7 @@ export default class GameMaster {
     }
     votedScore.sort(function(a,b){return b[1] - a[1]})
 
-    console.log("player" + this.players[votedScore[0][0]].getId() + "[" + this.players[votedScore[0][0]].getType() + "] was executed.");
+    console.log("player" + this.players[votedScore[0][0]].getId() + "[" + PlayerType[this.players[votedScore[0][0]].getType()] + "] was executed.");
     this.players[votedScore[0][0]].killed();
 
     return votedScore;

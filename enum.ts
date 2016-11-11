@@ -6,6 +6,7 @@ enum PlayerType {
     Witch,
     LittleGirl,
     Cop,
+    Diseased,
 }
 
 enum PlayerStatus {

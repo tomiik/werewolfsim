@@ -2,15 +2,20 @@
 var enum_1 = require("./enum");
 var villager_1 = require("./players/villager");
 var wolf_1 = require("./players/wolf");
+var log_CheckStatus = false;
+var log_Accuse = false;
+var log_Vote = false;
 var GameMaster = (function () {
     function GameMaster() {
         this.lastVoteResult = [];
         this.players = [];
+        this.players_queue = [];
     }
     GameMaster.prototype.play = function () {
         var lastVoteResult = [];
         var gamestatus = enum_1.GameStatus.Not_End;
         for (var i = 0; i < 10; i++) {
+            console.log();
             console.log("============== day " + i + "==============");
             this.nightEvents();
             this.checkPlayers();
@@ -37,31 +42,41 @@ var GameMaster = (function () {
         }
     };
     GameMaster.prototype.checkPlayers = function () {
-        console.log("----------------------------------------------");
-        for (var i = 0; i < this.players.length; i++) {
-            console.log(this.players[i].getId() + ":" + enum_1.PlayerType[this.players[i].getType()] + "\t: " + enum_1.PlayerStatus[this.players[i].getStatus()]);
+        if (log_CheckStatus == true) {
+            console.log("----------------------------------------------");
+            for (var i = 0; i < this.players.length; i++) {
+                console.log(this.players[i].getId() + ":" + enum_1.PlayerType[this.players[i].getType()] + "\t: " + enum_1.PlayerStatus[this.players[i].getStatus()]);
+            }
+            console.log("----------------------------------------------");
         }
-        console.log("----------------------------------------------");
     };
     GameMaster.prototype.createPlayers = function (no_of_wolves, no_of_villagers) {
         var no_of_players = no_of_wolves + no_of_villagers;
-        for (var i = 0; i < no_of_wolves; i++) {
-            this.players.push(new wolf_1.NormalWolf);
-        }
-        this.players.push(new villager_1.Doctor);
-        this.players.push(new villager_1.Cop);
-        this.players.push(new villager_1.NormalVillager);
-        this.players.push(new villager_1.NormalVillager);
-        this.players.push(new villager_1.NormalVillager);
-        this.players.push(new villager_1.NormalVillager);
-        this.players.push(new villager_1.NormalVillager);
-        this.players.push(new villager_1.NormalVillager);
-        this.players.push(new villager_1.NormalVillager);
-        this.players.push(new villager_1.NormalVillager);
+        this.createWolves(no_of_wolves);
+        this.players_queue = [new villager_1.Doctor(), new villager_1.Cop(), new villager_1.Diseased()];
+        this.createVillagers(no_of_villagers);
+        this.initializePlayers();
+    };
+    GameMaster.prototype.initializePlayers = function () {
         for (var i = 0; i < this.players.length; i++) {
-            this.players[i].clearWhitelist(no_of_players);
+            this.players[i].clearWhitelist(this.players.length);
             if (this.players[i].getType() == enum_1.PlayerType.NormalWolf) {
                 this.players[i].identifyWolves(this.players);
+            }
+        }
+    };
+    GameMaster.prototype.createWolves = function (num) {
+        for (var i = 0; i < num; i++) {
+            this.players.push(new wolf_1.NormalWolf);
+        }
+    };
+    GameMaster.prototype.createVillagers = function (num) {
+        for (var i = 0; i < num; i++) {
+            if (this.players_queue.length > 0) {
+                this.players.push(this.players_queue.shift());
+            }
+            else {
+                this.players.push(new villager_1.NormalVillager);
             }
         }
     };
@@ -75,7 +90,7 @@ var GameMaster = (function () {
         return false;
     };
     GameMaster.prototype.nightEvents = function () {
-        console.log("--night start");
+        console.log("------------- Night -------------");
         //wolf
         this.selectWolfLeader();
         for (var i = 0; i < this.players.length; i++) {
@@ -83,18 +98,24 @@ var GameMaster = (function () {
                 this.players[i].action(this.players);
             }
         }
-        console.log("--night end");
         this.statusUpdate();
     };
     GameMaster.prototype.dayEvents = function () {
+        console.log("-------------  Day  -------------");
         var accuseResult = this.accuse();
-        console.log(accuseResult);
+        if (log_Accuse == true) {
+            console.log(accuseResult);
+        }
         var voteResult = this.vote(accuseResult);
-        //console.log(voteResult);
+        if (log_Vote == true) {
+            console.log(voteResult);
+        }
         return voteResult;
     };
     GameMaster.prototype.accuse = function () {
-        console.log("accuse()");
+        if (log_Accuse == true) {
+            console.log("accuse()");
+        }
         var accuse;
         var accusedScore = [];
         //initialize accuse Score
@@ -112,7 +133,9 @@ var GameMaster = (function () {
         return accusedScore;
     };
     GameMaster.prototype.vote = function (accusedResult) {
-        console.log("vote()");
+        if (log_Vote == true) {
+            console.log("vote()");
+        }
         var vote;
         var votedScore = [];
         //initialize accuse Score
@@ -127,7 +150,7 @@ var GameMaster = (function () {
             }
         }
         votedScore.sort(function (a, b) { return b[1] - a[1]; });
-        console.log("player" + this.players[votedScore[0][0]].getId() + "[" + this.players[votedScore[0][0]].getType() + "] was executed.");
+        console.log("player" + this.players[votedScore[0][0]].getId() + "[" + enum_1.PlayerType[this.players[votedScore[0][0]].getType()] + "] was executed.");
         this.players[votedScore[0][0]].killed();
         return votedScore;
     };
