@@ -2,7 +2,7 @@
 var enum_1 = require("./enum");
 var villager_1 = require("./players/villager");
 var wolf_1 = require("./players/wolf");
-var log_CheckStatus = false;
+var log_CheckStatus = true;
 var log_Accuse = false;
 var log_Vote = false;
 var GameMaster = (function () {
@@ -53,7 +53,7 @@ var GameMaster = (function () {
     GameMaster.prototype.createPlayers = function (no_of_wolves, no_of_villagers) {
         var no_of_players = no_of_wolves + no_of_villagers;
         this.createWolves(no_of_wolves);
-        this.players_queue = [new villager_1.Doctor(), new villager_1.Cop(), new villager_1.Diseased()];
+        this.players_queue = [new villager_1.Doctor(), new villager_1.Cop(), new villager_1.Diseased(), new villager_1.Vigilante(), new wolf_1.Rogue()];
         this.createVillagers(no_of_villagers);
         this.initializePlayers();
     };
@@ -95,7 +95,7 @@ var GameMaster = (function () {
         this.selectWolfLeader();
         for (var i = 0; i < this.players.length; i++) {
             if (this.players[i].getStatus() != enum_1.PlayerStatus.Dead) {
-                this.players[i].action(this.players);
+                this.players[i].action(this.players, this.lastVoteResult);
             }
         }
         this.statusUpdate();
@@ -106,11 +106,10 @@ var GameMaster = (function () {
         if (log_Accuse == true) {
             console.log(accuseResult);
         }
-        var voteResult = this.vote(accuseResult);
+        this.lastVoteResult = this.vote(accuseResult);
         if (log_Vote == true) {
-            console.log(voteResult);
+            console.log(this.lastVoteResult);
         }
-        return voteResult;
     };
     GameMaster.prototype.accuse = function () {
         if (log_Accuse == true) {
@@ -155,6 +154,7 @@ var GameMaster = (function () {
         return votedScore;
     };
     GameMaster.prototype.statusUpdate = function () {
+        console.log("statusUpdate()");
         for (var i = 0; i < this.players.length; i++) {
             if (this.players[i].getStatus() == enum_1.PlayerStatus.Attacked) {
                 console.log("Player" + this.players[i].getId() + "[" + enum_1.PlayerType[this.players[i].getType()] + "] was killed.");

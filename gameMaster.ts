@@ -1,8 +1,8 @@
 import {PlayerType, PlayerStatus, GameStatus} from "./enum"
-import {NormalVillager,Doctor, Cop, Diseased} from "./players/villager"
-import {NormalWolf} from "./players/wolf"
+import {NormalVillager,Doctor, Cop, Diseased, Vigilante} from "./players/villager"
+import {NormalWolf, Rogue} from "./players/wolf"
 
-var log_CheckStatus = false;
+var log_CheckStatus = true;
 var log_Accuse = false;
 var log_Vote = false;
 
@@ -58,7 +58,7 @@ export default class GameMaster {
 
     this.createWolves(no_of_wolves);
 
-    this.players_queue = [new Doctor(), new Cop(), new Diseased()];
+    this.players_queue = [new Doctor(), new Cop(), new Diseased(), new Vigilante(), new Rogue()];
     this.createVillagers(no_of_villagers);
 
     this.initializePlayers();
@@ -102,7 +102,7 @@ export default class GameMaster {
     this.selectWolfLeader();
     for(let i = 0; i < this.players.length; i++){
       if(this.players[i].getStatus() != PlayerStatus.Dead){
-        this.players[i].action(this.players);
+        this.players[i].action(this.players, this.lastVoteResult);
       }
     }
     this.statusUpdate();
@@ -112,10 +112,8 @@ export default class GameMaster {
     var accuseResult = this.accuse();
 
     if(log_Accuse == true){console.log(accuseResult)}
-    var voteResult = this.vote(accuseResult);
-    if(log_Vote == true){console.log(voteResult)}
-
-    return voteResult;
+    this.lastVoteResult = this.vote(accuseResult);
+    if(log_Vote == true){console.log(this.lastVoteResult)}
   }
   accuse(){
     if(log_Accuse == true){
@@ -163,6 +161,7 @@ export default class GameMaster {
     return votedScore;
   }
   statusUpdate(){
+    console.log("statusUpdate()")
     for(let i = 0; i < this.players.length; i++){
       if(this.players[i].getStatus() == PlayerStatus.Attacked){
         console.log("Player" + this.players[i].getId() + "[" + PlayerType[this.players[i].getType()] + "] was killed." )

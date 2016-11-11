@@ -16,20 +16,17 @@ var Wolf = (function (_super) {
     Wolf.prototype.setLeader = function () {
         this.leader = true;
     };
-    Wolf.prototype.action = function (players) {
-        if (this.leader == true) {
-            while (true) {
-                var target = this.pickTarget(players);
-                if (players[target].type != enum_1.PlayerType.NormalWolf &&
-                    players[target].type != enum_1.PlayerType.Rogue &&
-                    players[target].getStatus != enum_1.PlayerStatus.Dead) {
-                    players[target].attacked();
-                    this.say("attack", target);
-                    return true;
-                }
+    Wolf.prototype.kill = function (players) {
+        while (true) {
+            var target = this.pickTarget(players);
+            if (this.whitelist[target] != true) {
+                players[target].attacked();
+                this.say("attack", target);
+                return true;
             }
         }
-        return false;
+    };
+    Wolf.prototype.action = function (players) {
     };
     return Wolf;
 }(player_1.default));
@@ -47,6 +44,22 @@ var NormalWolf = (function (_super) {
             }
         }
     };
+    NormalWolf.prototype.action = function (players) {
+        if (this.leader == true) {
+            this.kill(players);
+        }
+    };
     return NormalWolf;
 }(Wolf));
 exports.NormalWolf = NormalWolf;
+var Rogue = (function (_super) {
+    __extends(Rogue, _super);
+    function Rogue() {
+        return _super.call(this, enum_1.PlayerType.Rogue) || this;
+    }
+    Rogue.prototype.action = function (players) {
+        this.kill(players);
+    };
+    return Rogue;
+}(Wolf));
+exports.Rogue = Rogue;

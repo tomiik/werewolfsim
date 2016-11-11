@@ -7,6 +7,7 @@ enum PlayerType {
     LittleGirl,
     Cop,
     Diseased,
+    Vigilante,
 }
 
 enum PlayerStatus {

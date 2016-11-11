@@ -17,7 +17,7 @@ class Doctor extends Villager{
   constructor(){
     super(PlayerType.Doctor);
   }
-  action(players){
+  action(players, lastVoteResult){
     this.cure(players);
   }
   cure(players){
@@ -31,7 +31,7 @@ class Cop extends Villager{
   constructor(){
     super(PlayerType.Cop);
   }
-  action(players){
+  action(players, lastVoteResult){
     this.identify(players);
     //console.log(PlayerType[this.getType()] + " whitelist:" + this.whitelist)
     this.say("whitelist", this.whitelist);
@@ -68,4 +68,21 @@ class Diseased extends Villager{
   }
 }
 
-export {NormalVillager,Doctor,Cop, Diseased}
+class Vigilante extends Villager{
+  constructor(){
+    super(PlayerType.Vigilante)
+  }
+  action(players, lastVoteResult){
+      this.kill(players, lastVoteResult)
+  }
+  kill(players, lastVoteResult){
+    if(lastVoteResult.length > 2){
+      if(lastVoteResult[1][1] == lastVoteResult[0][1]){
+        players[lastVoteResult[1][0]].attacked();
+        this.say("attack", lastVoteResult[1][0]);
+      }
+    }
+  }
+}
+
+export {NormalVillager,Doctor,Cop, Diseased, Vigilante}

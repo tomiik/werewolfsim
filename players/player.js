@@ -1,7 +1,7 @@
 "use strict";
 var enum_1 = require("../enum");
 var count = 0;
-var silent = true;
+var silent = false;
 var Player = (function () {
     function Player(type) {
         this.status = enum_1.PlayerStatus.Healthy;
@@ -30,7 +30,7 @@ var Player = (function () {
             this.status = enum_1.PlayerStatus.Healthy;
         }
     };
-    Player.prototype.action = function (players) {
+    Player.prototype.action = function (players, lastVoteResult) {
     };
     Player.prototype.accuse = function (players) {
         var target;
@@ -78,6 +78,7 @@ var Player = (function () {
         for (var i = 0; i < length; i++) {
             this.whitelist[i] = undefined;
         }
+        this.whitelist[this.id] = true;
     };
     return Player;
 }());

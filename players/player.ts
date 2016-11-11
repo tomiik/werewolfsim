@@ -1,6 +1,6 @@
 import {PlayerType, PlayerStatus} from "../enum"
 var count = 0;
-const silent = true;
+var silent = false;
 
 export default class Player {
   private status: PlayerStatus;
@@ -34,7 +34,7 @@ export default class Player {
       this.status = PlayerStatus.Healthy;
     }
   }
-  action(players){
+  action(players, lastVoteResult){
 
   }
   accuse(players){
@@ -83,5 +83,6 @@ export default class Player {
     for(let i = 0; i < length; i++){
       this.whitelist[i] = undefined;
     }
+    this.whitelist[this.id] = true;
   }
 }

@@ -26,7 +26,7 @@ var Doctor = (function (_super) {
     function Doctor() {
         return _super.call(this, enum_1.PlayerType.Doctor) || this;
     }
-    Doctor.prototype.action = function (players) {
+    Doctor.prototype.action = function (players, lastVoteResult) {
         this.cure(players);
     };
     Doctor.prototype.cure = function (players) {
@@ -42,7 +42,7 @@ var Cop = (function (_super) {
     function Cop() {
         return _super.call(this, enum_1.PlayerType.Cop) || this;
     }
-    Cop.prototype.action = function (players) {
+    Cop.prototype.action = function (players, lastVoteResult) {
         this.identify(players);
         //console.log(PlayerType[this.getType()] + " whitelist:" + this.whitelist)
         this.say("whitelist", this.whitelist);
@@ -81,3 +81,22 @@ var Diseased = (function (_super) {
     return Diseased;
 }(Villager));
 exports.Diseased = Diseased;
+var Vigilante = (function (_super) {
+    __extends(Vigilante, _super);
+    function Vigilante() {
+        return _super.call(this, enum_1.PlayerType.Vigilante) || this;
+    }
+    Vigilante.prototype.action = function (players, lastVoteResult) {
+        this.kill(players, lastVoteResult);
+    };
+    Vigilante.prototype.kill = function (players, lastVoteResult) {
+        if (lastVoteResult.length > 2) {
+            if (lastVoteResult[1][1] == lastVoteResult[0][1]) {
+                players[lastVoteResult[1][0]].attacked();
+                this.say("attack", lastVoteResult[1][0]);
+            }
+        }
+    };
+    return Vigilante;
+}(Villager));
+exports.Vigilante = Vigilante;

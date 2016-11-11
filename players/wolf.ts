@@ -10,21 +10,18 @@ export default class Wolf extends Player{
   setLeader(){
     this.leader = true;
   }
-  action(players){
-    if(this.leader == true){
-      while(true){
-        var target = this.pickTarget(players);
+  kill(players){
+    while(true){
+      var target = this.pickTarget(players);
 
-        if( players[target].type != PlayerType.NormalWolf &&
-            players[target].type != PlayerType.Rogue &&
-            players[target].getStatus != PlayerStatus.Dead){
-            players[target].attacked();
-            this.say("attack", target)
-            return true;
-        }
+      if(this.whitelist[target] != true){
+          players[target].attacked();
+          this.say("attack", target)
+          return true;
       }
     }
-    return false;
+  }
+  action(players){
   }
 }
 
@@ -39,6 +36,20 @@ class NormalWolf extends Wolf{
       }
     }
   }
+  action(players){
+    if(this.leader == true){
+      this.kill(players);
+    }
+  }
 }
 
-export {NormalWolf}
+class Rogue extends Wolf{
+  constructor(){
+    super(PlayerType.Rogue);
+  }
+  action(players){
+    this.kill(players);
+  }
+
+}
+export {NormalWolf, Rogue}
