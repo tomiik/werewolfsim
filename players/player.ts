@@ -1,6 +1,8 @@
 import {PlayerType, PlayerStatus} from "../enum"
+//import {log_output_settings,player_queue_list} from "./../special_charactors"
+
 var count = 0;
-var silent = false;
+var silent = true;
 
 export default class Player {
   private status: PlayerStatus;

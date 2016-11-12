@@ -1,7 +1,8 @@
 "use strict";
 var enum_1 = require("../enum");
+//import {log_output_settings,player_queue_list} from "./../special_charactors"
 var count = 0;
-var silent = false;
+var silent = true;
 var Player = (function () {
     function Player(type) {
         this.status = enum_1.PlayerStatus.Healthy;

@@ -2,10 +2,11 @@
 var enum_1 = require("./enum");
 var villager_1 = require("./players/villager");
 var wolf_1 = require("./players/wolf");
-var log_CheckStatus = true;
-var log_Accuse = true;
-var log_Vote = true;
-var log_Others = true;
+var settings_1 = require("./settings");
+var log_CheckStatus = settings_1.log_output_settings.log_CheckStatus;
+var log_Accuse = settings_1.log_output_settings.log_Accuse;
+var log_Vote = settings_1.log_output_settings.log_Vote;
+var log_Others = settings_1.log_output_settings.log_Others;
 var count = 0;
 var GameMaster = (function () {
     function GameMaster(no_of_wolves, no_of_villagers) {
@@ -51,7 +52,7 @@ var GameMaster = (function () {
         var no_of_players = no_of_wolves + no_of_villagers;
         this.createWolves(no_of_wolves);
         //this.players_queue = [new Doctor(), new Cop(), new Diseased(), new Vigilante(), new Witch(), new Rogue(), new ToughGuy(),new Mason(), new Mason(), new Mason, new Cupid(), new LittleGirl()];
-        this.players_queue = [new villager_1.Doctor(), new villager_1.Cop(), new villager_1.Diseased(), new villager_1.Vigilante(), new villager_1.Witch(), new wolf_1.Rogue(), new villager_1.ToughGuy(), new villager_1.Mason(), new villager_1.Mason(), new villager_1.Cupid(), new villager_1.LittleGirl()];
+        //this.players_queue = [new Doctor(), new Cop(), new Diseased(), new Vigilante(), new Witch(), new Rogue(), new ToughGuy(),new Mason(), new Mason(), new Cupid(), new LittleGirl()];
         this.createVillagers(no_of_villagers);
         this.initializePlayers();
     };
@@ -72,6 +73,7 @@ var GameMaster = (function () {
         }
     };
     GameMaster.prototype.createVillagers = function (num) {
+        this.copySpecialCharactersFromDictionary();
         for (var i = 0; i < num; i++) {
             if (this.players_queue.length > 0) {
                 this.players.push(this.players_queue.shift());
@@ -79,6 +81,11 @@ var GameMaster = (function () {
             else {
                 this.players.push(new villager_1.NormalVillager);
             }
+        }
+    };
+    GameMaster.prototype.copySpecialCharactersFromDictionary = function () {
+        for (var i = 0; i < settings_1.player_queue_list.length; i++) {
+            this.players_queue.push(settings_1.player_queue_list[i]);
         }
     };
     GameMaster.prototype.selectWolfLeader = function () {

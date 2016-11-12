@@ -1,11 +1,12 @@
 import {PlayerType, PlayerStatus, GameStatus} from "./enum"
 import {NormalVillager,Doctor, Cop, Diseased, Vigilante, Witch, ToughGuy, Cupid, LittleGirl, Mason} from "./players/villager"
 import {NormalWolf, Rogue} from "./players/wolf"
+import {log_output_settings,player_queue_list} from "./settings"
 
-var log_CheckStatus = true;
-var log_Accuse = true;
-var log_Vote = true;
-var log_Others = true;
+var log_CheckStatus = log_output_settings.log_CheckStatus;
+var log_Accuse = log_output_settings.log_Accuse;
+var log_Vote = log_output_settings.log_Vote;
+var log_Others = log_output_settings.log_Others;
 var count = 0;
 
 export default class GameMaster {
@@ -57,7 +58,7 @@ export default class GameMaster {
     this.createWolves(no_of_wolves);
 
     //this.players_queue = [new Doctor(), new Cop(), new Diseased(), new Vigilante(), new Witch(), new Rogue(), new ToughGuy(),new Mason(), new Mason(), new Mason, new Cupid(), new LittleGirl()];
-    this.players_queue = [new Doctor(), new Cop(), new Diseased(), new Vigilante(), new Witch(), new Rogue(), new ToughGuy(),new Mason(), new Mason(), new Cupid(), new LittleGirl()];
+    //this.players_queue = [new Doctor(), new Cop(), new Diseased(), new Vigilante(), new Witch(), new Rogue(), new ToughGuy(),new Mason(), new Mason(), new Cupid(), new LittleGirl()];
     this.createVillagers(no_of_villagers);
 
     this.initializePlayers();
@@ -77,9 +78,9 @@ export default class GameMaster {
     for(let i = 0; i < num; i++){
       this.players.push(new NormalWolf);
     }
-
   }
   createVillagers(num){
+    this.copySpecialCharactersFromDictionary();
     for(let i = 0; i < num; i++){
       if(this.players_queue.length > 0){
         this.players.push(this.players_queue.shift())
@@ -87,6 +88,11 @@ export default class GameMaster {
       else{
         this.players.push(new NormalVillager);
       }
+    }
+  }
+  copySpecialCharactersFromDictionary(){
+    for(let i = 0; i < player_queue_list.length; i++){
+      this.players_queue.push(player_queue_list[i]);
     }
   }
   selectWolfLeader(){
