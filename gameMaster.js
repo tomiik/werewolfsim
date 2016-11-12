@@ -3,9 +3,10 @@ var enum_1 = require("./enum");
 var villager_1 = require("./players/villager");
 var wolf_1 = require("./players/wolf");
 var log_CheckStatus = true;
-var log_Accuse = false;
-var log_Vote = false;
+var log_Accuse = true;
+var log_Vote = true;
 var log_Others = true;
+var count = 0;
 var GameMaster = (function () {
     function GameMaster(no_of_wolves, no_of_villagers) {
         this.lastVoteResult = [];
@@ -14,6 +15,7 @@ var GameMaster = (function () {
         this.night = true;
         this.day = 1;
         this.createPlayers(no_of_wolves, no_of_villagers);
+        this.players[0].clearCounter();
     }
     GameMaster.prototype.play = function () {
         var lastVoteResult = [];
@@ -48,7 +50,8 @@ var GameMaster = (function () {
     GameMaster.prototype.createPlayers = function (no_of_wolves, no_of_villagers) {
         var no_of_players = no_of_wolves + no_of_villagers;
         this.createWolves(no_of_wolves);
-        this.players_queue = [new villager_1.Doctor(), new villager_1.Cop(), new villager_1.Diseased(), new villager_1.Vigilante(), new villager_1.Witch(), new wolf_1.Rogue(), new villager_1.ToughGuy(), new villager_1.Cupid(), new villager_1.LittleGirl()];
+        //this.players_queue = [new Doctor(), new Cop(), new Diseased(), new Vigilante(), new Witch(), new Rogue(), new ToughGuy(),new Mason(), new Mason(), new Mason, new Cupid(), new LittleGirl()];
+        this.players_queue = [new villager_1.Doctor(), new villager_1.Cop(), new villager_1.Diseased(), new villager_1.Vigilante(), new villager_1.Witch(), new wolf_1.Rogue(), new villager_1.ToughGuy(), new villager_1.Mason(), new villager_1.Mason(), new villager_1.Cupid(), new villager_1.LittleGirl()];
         this.createVillagers(no_of_villagers);
         this.initializePlayers();
     };
@@ -57,6 +60,9 @@ var GameMaster = (function () {
             this.players[i].clearWhitelist(this.players.length);
             if (this.players[i].getType() == enum_1.PlayerType.NormalWolf) {
                 this.players[i].identifyWolves(this.players);
+            }
+            if (this.players[i].getType() == enum_1.PlayerType.Mason) {
+                this.players[i].identifyMasons(this.players);
             }
         }
     };
@@ -181,11 +187,11 @@ var GameMaster = (function () {
         this.log("Alives:" + alives + " Wloves:" + wolves + " Villagers:" + (alives - wolves));
         if (wolves >= (alives - wolves)) {
             result = enum_1.GameStatus.End_Wolves_Won;
-            console.log("~~~~~~~~~~~~~~ Wolves Won ~~~~~~~~~~~~~~~~");
+            this.log("~~~~~~~~~~~~~~ Wolves Won ~~~~~~~~~~~~~~~~");
         }
         else if (wolves == 0) {
             result = enum_1.GameStatus.End_Villagers_Won;
-            console.log("~~~~~~~~~~~~~~ Villagers Won ~~~~~~~~~~~~~~~~");
+            this.log("~~~~~~~~~~~~~~ Villagers Won ~~~~~~~~~~~~~~~~");
         }
         return result;
     };

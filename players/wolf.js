@@ -21,13 +21,13 @@ var Wolf = (function (_super) {
         if (lastVoteResult.length > 0) {
             for (var i = lastVoteResult.length - 1; i > 0; i--) {
                 target = lastVoteResult[i][0];
-                if (this.whitelist[target] != true) {
+                if (this.whitelist[target] != true && players[target].getStatus() != enum_1.PlayerStatus.Dead) {
                     players[target].attacked();
                     this.say("attack", target);
                     if (players[target].getType() == enum_1.PlayerType.LittleGirl) {
                         for (var j = i; j > 0; j--) {
                             target = lastVoteResult[j][0];
-                            if (this.whitelist[target] != true) {
+                            if (this.whitelist[target] != true && players[target].getStatus() != enum_1.PlayerStatus.Dead) {
                                 this.say("attack", target);
                                 players[target].attacked();
                                 return true;
@@ -44,6 +44,16 @@ var Wolf = (function (_super) {
                 if (this.whitelist[target] != true) {
                     players[target].attacked();
                     this.say("attack", target);
+                    if (players[target].getType() == enum_1.PlayerType.LittleGirl) {
+                        while (true) {
+                            target = this.pickTarget(players);
+                            if (this.whitelist[target] != true) {
+                                players[target].attacked();
+                                this.say("attack", target);
+                                return true;
+                            }
+                        }
+                    }
                     return true;
                 }
             }

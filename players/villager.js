@@ -55,7 +55,8 @@ var Cop = (function (_super) {
             var target = this.pickTarget(players);
             //console.log(target + ":" + this.whitelist[target]);
             if (this.whitelist[target] == undefined) {
-                if (players[target].getType() == enum_1.PlayerType.NormalWolf) {
+                if (players[target].getType() == enum_1.PlayerType.NormalWolf ||
+                    players[target].getType() == enum_1.PlayerType.Rogue) {
                     this.whitelist[target] = false;
                 }
                 else {
@@ -203,3 +204,18 @@ var LittleGirl = (function (_super) {
     return LittleGirl;
 }(Cop));
 exports.LittleGirl = LittleGirl;
+var Mason = (function (_super) {
+    __extends(Mason, _super);
+    function Mason() {
+        return _super.call(this, enum_1.PlayerType.Mason) || this;
+    }
+    Mason.prototype.identifyMasons = function (players) {
+        for (var i = 0; i < players.length; i++) {
+            if (players[i].getType() == enum_1.PlayerType.Mason) {
+                this.whitelist[i] = true;
+            }
+        }
+    };
+    return Mason;
+}(Villager));
+exports.Mason = Mason;

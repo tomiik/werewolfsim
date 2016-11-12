@@ -12,6 +12,7 @@ var PlayerType;
     PlayerType[PlayerType["Vigilante"] = 9] = "Vigilante";
     PlayerType[PlayerType["ToughGuy"] = 10] = "ToughGuy";
     PlayerType[PlayerType["Cupid"] = 11] = "Cupid";
+    PlayerType[PlayerType["Mason"] = 12] = "Mason";
 })(PlayerType || (PlayerType = {}));
 exports.PlayerType = PlayerType;
 var PlayerStatus;

@@ -9,7 +9,8 @@ enum PlayerType {
     Diseased,
     Vigilante,
     ToughGuy,
-    Cupid
+    Cupid,
+    Mason
 }
 
 enum PlayerStatus {

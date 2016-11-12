@@ -42,7 +42,8 @@ class Cop extends Villager{
       var target = this.pickTarget(players);
       //console.log(target + ":" + this.whitelist[target]);
       if(this.whitelist[target] == undefined ){
-        if(players[target].getType() == PlayerType.NormalWolf){
+        if( players[target].getType() == PlayerType.NormalWolf ||
+            players[target].getType() == PlayerType.Rogue){
           this.whitelist[target] = false;
         }else{
           this.whitelist[target] = true;
@@ -179,4 +180,17 @@ class LittleGirl extends Cop{
   }
 }
 
-export {NormalVillager,Doctor,Cop, Diseased, Vigilante, Witch, ToughGuy, Cupid, LittleGirl}
+class Mason extends Villager{
+  constructor(){
+    super(PlayerType.Mason);
+  }
+  identifyMasons(players){
+    for(let i = 0; i < players.length; i++){
+      if(players[i].getType() == PlayerType.Mason){
+        this.whitelist[i] = true;
+      }
+    }
+  }
+}
+
+export {NormalVillager,Doctor,Cop, Diseased, Vigilante, Witch, ToughGuy, Cupid, LittleGirl, Mason}

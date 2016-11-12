@@ -87,6 +87,9 @@ var Player = (function () {
         }
         this.whitelist[this.id] = true;
     };
+    Player.prototype.clearCounter = function () {
+        count = 0;
+    };
     return Player;
 }());
 Object.defineProperty(exports, "__esModule", { value: true });

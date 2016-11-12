@@ -1,11 +1,12 @@
 import {PlayerType, PlayerStatus, GameStatus} from "./enum"
-import {NormalVillager,Doctor, Cop, Diseased, Vigilante, Witch, ToughGuy, Cupid, LittleGirl} from "./players/villager"
+import {NormalVillager,Doctor, Cop, Diseased, Vigilante, Witch, ToughGuy, Cupid, LittleGirl, Mason} from "./players/villager"
 import {NormalWolf, Rogue} from "./players/wolf"
 
 var log_CheckStatus = true;
-var log_Accuse = false;
-var log_Vote = false;
+var log_Accuse = true;
+var log_Vote = true;
 var log_Others = true;
+var count = 0;
 
 export default class GameMaster {
   lastVoteResult = [];
@@ -17,6 +18,7 @@ export default class GameMaster {
     this.night = true;
     this.day = 1;
     this.createPlayers(no_of_wolves, no_of_villagers)
+    this.players[0].clearCounter();
   }
   play(){
     var lastVoteResult = [];
@@ -54,7 +56,8 @@ export default class GameMaster {
 
     this.createWolves(no_of_wolves);
 
-    this.players_queue = [new Doctor(), new Cop(), new Diseased(), new Vigilante(), new Witch(), new Rogue(), new ToughGuy(), new Cupid(), new LittleGirl()];
+    //this.players_queue = [new Doctor(), new Cop(), new Diseased(), new Vigilante(), new Witch(), new Rogue(), new ToughGuy(),new Mason(), new Mason(), new Mason, new Cupid(), new LittleGirl()];
+    this.players_queue = [new Doctor(), new Cop(), new Diseased(), new Vigilante(), new Witch(), new Rogue(), new ToughGuy(),new Mason(), new Mason(), new Cupid(), new LittleGirl()];
     this.createVillagers(no_of_villagers);
 
     this.initializePlayers();
@@ -64,6 +67,9 @@ export default class GameMaster {
       this.players[i].clearWhitelist(this.players.length);
       if(this.players[i].getType() == PlayerType.NormalWolf){
         this.players[i].identifyWolves(this.players);
+      }
+      if(this.players[i].getType() == PlayerType.Mason){
+        this.players[i].identifyMasons(this.players);
       }
     }
   }
@@ -188,11 +194,11 @@ export default class GameMaster {
     this.log("Alives:" + alives + " Wloves:" + wolves + " Villagers:" + (alives - wolves));
     if(wolves >= (alives - wolves)){
       result =  GameStatus.End_Wolves_Won;
-      console.log("~~~~~~~~~~~~~~ Wolves Won ~~~~~~~~~~~~~~~~");
+      this.log("~~~~~~~~~~~~~~ Wolves Won ~~~~~~~~~~~~~~~~");
     }
     else if(wolves == 0){
       result = GameStatus.End_Villagers_Won;
-      console.log("~~~~~~~~~~~~~~ Villagers Won ~~~~~~~~~~~~~~~~");
+      this.log("~~~~~~~~~~~~~~ Villagers Won ~~~~~~~~~~~~~~~~");
     }
     return result;
   };

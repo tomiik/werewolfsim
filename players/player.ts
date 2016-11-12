@@ -94,4 +94,7 @@ export default class Player {
     }
     this.whitelist[this.id] = true;
   }
+  clearCounter(){
+    count = 0;
+  }
 }
