@@ -24,6 +24,16 @@ var Wolf = (function (_super) {
                 if (this.whitelist[target] != true) {
                     players[target].attacked();
                     this.say("attack", target);
+                    if (players[target].getType() == enum_1.PlayerType.LittleGirl) {
+                        for (var j = i; j > 0; j--) {
+                            target = lastVoteResult[j][0];
+                            if (this.whitelist[target] != true) {
+                                this.say("attack", target);
+                                players[target].attacked();
+                                return true;
+                            }
+                        }
+                    }
                     return true;
                 }
             }

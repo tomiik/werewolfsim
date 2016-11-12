@@ -40,8 +40,9 @@ var Doctor = (function (_super) {
 exports.Doctor = Doctor;
 var Cop = (function (_super) {
     __extends(Cop, _super);
-    function Cop() {
-        return _super.call(this, enum_1.PlayerType.Cop) || this;
+    function Cop(playerType) {
+        if (playerType === void 0) { playerType = enum_1.PlayerType.Cop; }
+        return _super.call(this, playerType) || this;
     }
     Cop.prototype.action = function (players, lastVoteResult) {
         this.identify(players);
@@ -180,9 +181,8 @@ var Cupid = (function (_super) {
         while (true) {
             var target1 = this.pickTarget(players);
             var target2 = this.pickTarget(players);
-            console.log("cupid1:" + target1);
-            console.log("cupid2:" + target2);
             if (target1 != target2 && target1 != this.getId() && target2 != this.getId()) {
+                this.say("make couple", target1 + "<->" + target2);
                 players[target1].setPartner(target2);
                 players[target2].setPartner(target1);
                 return;
@@ -192,3 +192,14 @@ var Cupid = (function (_super) {
     return Cupid;
 }(Villager));
 exports.Cupid = Cupid;
+var LittleGirl = (function (_super) {
+    __extends(LittleGirl, _super);
+    function LittleGirl() {
+        return _super.call(this, enum_1.PlayerType.LittleGirl) || this;
+    }
+    LittleGirl.prototype.killed = function () {
+        _super.prototype.killed.call(this);
+    };
+    return LittleGirl;
+}(Cop));
+exports.LittleGirl = LittleGirl;

@@ -1,56 +1,52 @@
 import {PlayerType, PlayerStatus, GameStatus} from "./enum"
-import {NormalVillager,Doctor, Cop, Diseased, Vigilante, Witch, ToughGuy, Cupid} from "./players/villager"
+import {NormalVillager,Doctor, Cop, Diseased, Vigilante, Witch, ToughGuy, Cupid, LittleGirl} from "./players/villager"
 import {NormalWolf, Rogue} from "./players/wolf"
 
 var log_CheckStatus = true;
 var log_Accuse = false;
 var log_Vote = false;
+var log_Others = true;
 
 export default class GameMaster {
   lastVoteResult = [];
   players = [];
   players_queue = [];
-  constructor(){
-
+  night:boolean;
+  day:number;
+  constructor(no_of_wolves, no_of_villagers){
+    this.night = true;
+    this.day = 1;
+    this.createPlayers(no_of_wolves, no_of_villagers)
   }
   play(){
     var lastVoteResult = [];
     var gamestatus = GameStatus.Not_End;
-    for(let i = 0; i < 10; i++){
-      console.log();
-      console.log("============== day " + i + "==============")
-      this.nightEvents();
+    while(gamestatus == GameStatus.Not_End){
+      this.log("");
+      this.log("============== day " + this.day + "==============")
+      if(this.night == true){
+        this.nightEvents();
+        this.night = false;
+      }
+      else {
+        this.dayEvents();
+        this.night = true;
+        this.day++;
+      }
       this.checkPlayers();
       gamestatus = this.checkGameOver();
-      if(gamestatus == GameStatus.End_Wolves_Won){
-        console.log("~~~~~~~~~~~~~~ Wolves Won ~~~~~~~~~~~~~~~~");
-        return gamestatus;
-      }
-      else if(gamestatus == GameStatus.End_Villagers_Won){
-        console.log("~~~~~~~~~~~~~~ Villagers Won ~~~~~~~~~~~~~~~~");
-        return gamestatus;
-      }
-      this.dayEvents();
-      this.checkPlayers();
-      gamestatus = this.checkGameOver();
-      if(gamestatus == GameStatus.End_Wolves_Won){
-        console.log("~~~~~~~~~~~~~~ Wolves Won ~~~~~~~~~~~~~~~~");
-        return gamestatus;
-      }
-      else if(gamestatus == GameStatus.End_Villagers_Won){
-        console.log("~~~~~~~~~~~~~~ Villagers Won ~~~~~~~~~~~~~~~~");
-        return gamestatus;
-      }
     }
+    return gamestatus;
   }
   checkPlayers(){
     if(log_CheckStatus == true){
-      console.log("----------------------------------------------")
+      this.log("----------------------------------------------")
       for(let i = 0; i < this.players.length; i++){
-        console.log(this.players[i].getId() +":" + PlayerType[this.players[i].getType()] + "\t: " + PlayerStatus[this.players[i].getStatus()]);
+        //console.log(this.players[i].getId() +":" + PlayerType[this.players[i].getType()] + "\t: " + PlayerStatus[this.players[i].getStatus()]);
+        this.log(this.players[i].getId() +":" + PlayerStatus[this.players[i].getStatus()] + "   \t:" + PlayerType[this.players[i].getType()]);
 
       }
-      console.log("----------------------------------------------")
+      this.log("----------------------------------------------")
     }
   }
   createPlayers(no_of_wolves, no_of_villagers){
@@ -58,7 +54,7 @@ export default class GameMaster {
 
     this.createWolves(no_of_wolves);
 
-    this.players_queue = [new Doctor(), new Cop(), new Diseased(), new Vigilante(), new Witch(), new Rogue(), new ToughGuy(), new Cupid()];
+    this.players_queue = [new Doctor(), new Cop(), new Diseased(), new Vigilante(), new Witch(), new Rogue(), new ToughGuy(), new Cupid(), new LittleGirl()];
     this.createVillagers(no_of_villagers);
 
     this.initializePlayers();
@@ -97,7 +93,7 @@ export default class GameMaster {
     return false;
   }
   nightEvents(){
-    console.log("------------- Night -------------")
+    this.log("------------- Night -------------")
     //wolf
     this.selectWolfLeader();
     for(let i = 0; i < this.players.length; i++){
@@ -108,7 +104,7 @@ export default class GameMaster {
     this.statusUpdate();
   }
   dayEvents(){
-    console.log("-------------  Day  -------------")
+    this.log("-------------  Day  -------------")
     var accuseResult = this.accuse();
 
     if(log_Accuse == true){console.log(accuseResult)}
@@ -117,7 +113,7 @@ export default class GameMaster {
   }
   accuse(){
     if(log_Accuse == true){
-      console.log("accuse()");
+      this.log("accuse()");
     }
     var accuse;
     var accusedScore = [];
@@ -137,7 +133,7 @@ export default class GameMaster {
   }
   vote(accusedResult){
     if(log_Vote == true){
-      console.log("vote()");
+      this.log("vote()");
     }
     var vote;
     var votedScore = [];
@@ -155,24 +151,22 @@ export default class GameMaster {
     }
     votedScore.sort(function(a,b){return b[1] - a[1]})
     var target = votedScore[0][0];
-    console.log("player" + this.players[target].getId() + "[" + PlayerType[this.players[target].getType()] + "] was executed.");
+    this.log("player" + this.players[target].getId() + "[" + PlayerType[this.players[target].getType()] + "] was executed.");
     this.players[target].killed();
     if(this.players[target].partner > 0){
-      console.log("Player" + this.players[this.players[target].partner].getId() + "[" + PlayerType[this.players[target].getType()] + "] was dead." )
+      this.log("Player" + this.players[this.players[target].partner].getId() + "[" + PlayerType[this.players[this.players[target].partner].getType()] + "] was dead." )
       this.players[this.players[target].partner].killed();
     }
-
-
     return votedScore;
   }
   statusUpdate(){
-    console.log("statusUpdate()")
+    this.log("statusUpdate()")
     for(let i = 0; i < this.players.length; i++){
       if(this.players[i].getStatus() == PlayerStatus.Attacked){
-        console.log("Player" + this.players[i].getId() + "[" + PlayerType[this.players[i].getType()] + "] was killed." )
+        this.log("Player" + this.players[i].getId() + "[" + PlayerType[this.players[i].getType()] + "] was killed." )
         this.players[i].killed();
-        if(this.players[i].partner > 0){
-          console.log("Player" + this.players[this.players[i].partner].getId() + "[" + PlayerType[this.players[this.players[i].partner].getType()] + "] was dead." )
+        if(this.players[i].partner >= 0){
+          this.log("Player" + this.players[this.players[i].partner].getId() + "[" + PlayerType[this.players[this.players[i].partner].getType()] + "] was dead." )
           this.players[this.players[i].partner].killed();
         }
       }
@@ -191,13 +185,20 @@ export default class GameMaster {
         }
       }
     }
-    console.log("Alives:" + alives + " Wloves:" + wolves + " Villagers:" + (alives - wolves));
+    this.log("Alives:" + alives + " Wloves:" + wolves + " Villagers:" + (alives - wolves));
     if(wolves >= (alives - wolves)){
       result =  GameStatus.End_Wolves_Won;
+      console.log("~~~~~~~~~~~~~~ Wolves Won ~~~~~~~~~~~~~~~~");
     }
     else if(wolves == 0){
       result = GameStatus.End_Villagers_Won;
+      console.log("~~~~~~~~~~~~~~ Villagers Won ~~~~~~~~~~~~~~~~");
     }
     return result;
   };
+  log(string){
+    if(log_Others == true){
+      console.log(string);
+    }
+  }
 }

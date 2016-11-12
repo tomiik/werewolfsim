@@ -28,8 +28,8 @@ class Doctor extends Villager{
 }
 
 class Cop extends Villager{
-  constructor(){
-    super(PlayerType.Cop);
+  constructor(playerType = PlayerType.Cop){
+    super(playerType);
   }
   action(players, lastVoteResult){
     this.identify(players);
@@ -160,9 +160,8 @@ class Cupid extends Villager{
     while(true){
       var target1 = this.pickTarget(players);
       var target2 = this.pickTarget(players);
-      console.log("cupid1:" + target1);
-      console.log("cupid2:" + target2);
       if(target1 != target2 && target1 != this.getId() && target2 != this.getId()){
+        this.say("make couple", target1 + "<->" + target2)
         players[target1].setPartner(target2);
         players[target2].setPartner(target1);
         return;
@@ -171,4 +170,13 @@ class Cupid extends Villager{
   }
 }
 
-export {NormalVillager,Doctor,Cop, Diseased, Vigilante, Witch, ToughGuy, Cupid}
+class LittleGirl extends Cop{
+  constructor(){
+    super(PlayerType.LittleGirl);
+  }
+  killed(){
+    super.killed();
+  }
+}
+
+export {NormalVillager,Doctor,Cop, Diseased, Vigilante, Witch, ToughGuy, Cupid, LittleGirl}

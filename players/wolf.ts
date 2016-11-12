@@ -17,7 +17,17 @@ export default class Wolf extends Player{
         target = lastVoteResult[i][0];
         if(this.whitelist[target] != true){
           players[target].attacked();
-          this.say("attack", target)
+          this.say("attack", target);
+          if(players[target].getType() == PlayerType.LittleGirl){
+            for(let j = i; j > 0 ; j--){
+              target = lastVoteResult[j][0];
+              if(this.whitelist[target] != true){
+                this.say("attack", target);
+                players[target].attacked();
+                return true;
+              }
+            }
+          }
           return true;
         }
       }
