@@ -3,12 +3,14 @@ import {NormalWolf, Rogue} from "./players/wolf"
 
 var log_output_settings = {
   "log_Others": false,
-  "log_CheckStatus": true,
+  "log_CheckStatus": false,
   "log_Accuse": false,
   "log_Vote": false,
-  "log_actions": true,
+  "log_actions": false,
 }
 
+//Villagers are from this list. After joined all character from it, ramaining villagers are normal villagers.
+/*
 var player_queue_list = [
   new Doctor(),
   new Cop(),
@@ -20,7 +22,7 @@ var player_queue_list = [
   new Mason(),
   new Mason(),
   new Cupid(),
-  //new LittleGirl(),
+  new LittleGirl(),
 ];
-
-export{log_output_settings,player_queue_list}
+*/
+export{log_output_settings}

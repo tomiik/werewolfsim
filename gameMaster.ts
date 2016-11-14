@@ -1,7 +1,7 @@
 import {PlayerType, PlayerStatus, GameStatus} from "./enum"
 import {NormalVillager,Doctor, Cop, Diseased, Vigilante, Witch, ToughGuy, Cupid, LittleGirl, Mason} from "./players/villager"
 import {NormalWolf, Rogue} from "./players/wolf"
-import {log_output_settings,player_queue_list} from "./settings"
+import {log_output_settings} from "./settings"
 
 var log_CheckStatus = log_output_settings.log_CheckStatus;
 var log_Accuse = log_output_settings.log_Accuse;
@@ -19,7 +19,6 @@ export default class GameMaster {
     this.night = true;
     this.day = 1;
     this.createPlayers(no_of_wolves, no_of_villagers)
-    this.players[0].clearCounter();
   }
   play(){
     var lastVoteResult = [];
@@ -58,12 +57,12 @@ export default class GameMaster {
     this.createWolves(no_of_wolves);
 
     //this.players_queue = [new Doctor(), new Cop(), new Diseased(), new Vigilante(), new Witch(), new Rogue(), new ToughGuy(),new Mason(), new Mason(), new Mason, new Cupid(), new LittleGirl()];
-    //this.players_queue = [new Doctor(), new Cop(), new Diseased(), new Vigilante(), new Witch(), new Rogue(), new ToughGuy(),new Mason(), new Mason(), new Cupid(), new LittleGirl()];
     this.createVillagers(no_of_villagers);
 
     this.initializePlayers();
   }
   initializePlayers(){
+    this.giveIdToPlayers();
     for(var i = 0; i < this.players.length; i++){
       this.players[i].clearWhitelist(this.players.length);
       if(this.players[i].getType() == PlayerType.NormalWolf){
@@ -91,8 +90,10 @@ export default class GameMaster {
     }
   }
   copySpecialCharactersFromDictionary(){
-    for(let i = 0; i < player_queue_list.length; i++){
-      this.players_queue.push(player_queue_list[i]);
+    var players_queue_list = [new Doctor(), new Cop(), new Diseased(), new Vigilante(), new Witch(), new Rogue(), new ToughGuy(),new Mason(), new Mason(), new Cupid(), new LittleGirl()];
+
+    for(let i = 0; i < players_queue_list.length; i++){
+      this.players_queue.push(players_queue_list[i]);
     }
   }
   selectWolfLeader(){
@@ -182,6 +183,11 @@ export default class GameMaster {
           this.players[this.players[i].partner].killed();
         }
       }
+    }
+  }
+  giveIdToPlayers(){
+    for(let i = 0; i < this.players.length; i++){
+      this.players[i].setId(i);
     }
   }
   checkGameOver(){

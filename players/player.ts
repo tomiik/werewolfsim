@@ -1,7 +1,7 @@
 import {PlayerType, PlayerStatus} from "../enum"
 //import {log_output_settings,player_queue_list} from "./../special_charactors"
 
-var count = 0;
+//var count = 0;
 var silent = true;
 
 export default class Player {
@@ -14,10 +14,9 @@ export default class Player {
   constructor(type){
     this.status = PlayerStatus.Healthy;
     this.type = type;
-    this.id = count;
     this.whitelist = [];
     this.partner = -1;
-    count++;
+    //console.log("constructor" + PlayerType[this.type])
   }
   getId(){
     return this.id;
@@ -96,7 +95,7 @@ export default class Player {
     }
     this.whitelist[this.id] = true;
   }
-  clearCounter(){
-    count = 0;
+  setId(id){
+    this.id = id;
   }
 }

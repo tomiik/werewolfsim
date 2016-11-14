@@ -18,12 +18,14 @@ var Wolf = (function (_super) {
     };
     Wolf.prototype.kill = function (players, lastVoteResult) {
         var target;
+        //kill less suspected
         if (lastVoteResult.length > 0) {
             for (var i = lastVoteResult.length - 1; i > 0; i--) {
                 target = lastVoteResult[i][0];
                 if (this.whitelist[target] != true && players[target].getStatus() != enum_1.PlayerStatus.Dead) {
                     players[target].attacked();
                     this.say("attack", target);
+                    //kill another if victim is the little girl
                     if (players[target].getType() == enum_1.PlayerType.LittleGirl) {
                         for (var j = i; j > 0; j--) {
                             target = lastVoteResult[j][0];
@@ -40,10 +42,12 @@ var Wolf = (function (_super) {
         }
         else {
             while (true) {
+                //kill randomly
                 target = this.pickTarget(players);
                 if (this.whitelist[target] != true) {
                     players[target].attacked();
                     this.say("attack", target);
+                    //kill another if victim is the little girl
                     if (players[target].getType() == enum_1.PlayerType.LittleGirl) {
                         while (true) {
                             target = this.pickTarget(players);

@@ -1,16 +1,15 @@
 "use strict";
 var enum_1 = require("../enum");
 //import {log_output_settings,player_queue_list} from "./../special_charactors"
-var count = 0;
+//var count = 0;
 var silent = true;
 var Player = (function () {
     function Player(type) {
         this.status = enum_1.PlayerStatus.Healthy;
         this.type = type;
-        this.id = count;
         this.whitelist = [];
         this.partner = -1;
-        count++;
+        //console.log("constructor" + PlayerType[this.type])
     }
     Player.prototype.getId = function () {
         return this.id;
@@ -88,8 +87,8 @@ var Player = (function () {
         }
         this.whitelist[this.id] = true;
     };
-    Player.prototype.clearCounter = function () {
-        count = 0;
+    Player.prototype.setId = function (id) {
+        this.id = id;
     };
     return Player;
 }());

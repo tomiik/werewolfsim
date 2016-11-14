@@ -16,7 +16,6 @@ var GameMaster = (function () {
         this.night = true;
         this.day = 1;
         this.createPlayers(no_of_wolves, no_of_villagers);
-        this.players[0].clearCounter();
     }
     GameMaster.prototype.play = function () {
         var lastVoteResult = [];
@@ -52,11 +51,11 @@ var GameMaster = (function () {
         var no_of_players = no_of_wolves + no_of_villagers;
         this.createWolves(no_of_wolves);
         //this.players_queue = [new Doctor(), new Cop(), new Diseased(), new Vigilante(), new Witch(), new Rogue(), new ToughGuy(),new Mason(), new Mason(), new Mason, new Cupid(), new LittleGirl()];
-        //this.players_queue = [new Doctor(), new Cop(), new Diseased(), new Vigilante(), new Witch(), new Rogue(), new ToughGuy(),new Mason(), new Mason(), new Cupid(), new LittleGirl()];
         this.createVillagers(no_of_villagers);
         this.initializePlayers();
     };
     GameMaster.prototype.initializePlayers = function () {
+        this.giveIdToPlayers();
         for (var i = 0; i < this.players.length; i++) {
             this.players[i].clearWhitelist(this.players.length);
             if (this.players[i].getType() == enum_1.PlayerType.NormalWolf) {
@@ -84,8 +83,9 @@ var GameMaster = (function () {
         }
     };
     GameMaster.prototype.copySpecialCharactersFromDictionary = function () {
-        for (var i = 0; i < settings_1.player_queue_list.length; i++) {
-            this.players_queue.push(settings_1.player_queue_list[i]);
+        var players_queue_list = [new villager_1.Doctor(), new villager_1.Cop(), new villager_1.Diseased(), new villager_1.Vigilante(), new villager_1.Witch(), new wolf_1.Rogue(), new villager_1.ToughGuy(), new villager_1.Mason(), new villager_1.Mason(), new villager_1.Cupid(), new villager_1.LittleGirl()];
+        for (var i = 0; i < players_queue_list.length; i++) {
+            this.players_queue.push(players_queue_list[i]);
         }
     };
     GameMaster.prototype.selectWolfLeader = function () {
@@ -177,6 +177,11 @@ var GameMaster = (function () {
                     this.players[this.players[i].partner].killed();
                 }
             }
+        }
+    };
+    GameMaster.prototype.giveIdToPlayers = function () {
+        for (var i = 0; i < this.players.length; i++) {
+            this.players[i].setId(i);
         }
     };
     GameMaster.prototype.checkGameOver = function () {

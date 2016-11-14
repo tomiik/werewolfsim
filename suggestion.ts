@@ -1,11 +1,15 @@
+declare function require(x: string): any;
+const readlineSync = require('readline-sync');
+
 import GameMaster from "./gameMaster"
 import {PlayerType, PlayerStatus, GameStatus} from "./enum"
 
-var no_of_players = 20;
+var no_of_players = readlineSync.question("Please input the number of players. >");;
+var games = readlineSync.question("Please input the number of games. >");
+
 
 var winner: GameStatus;
 var gamemaster:GameMaster;
-var games = 1000;
 for(let j = Math.ceil(no_of_players/20); j < no_of_players/2; j++){
   var no_of_wolves = j
   var no_of_villagers = no_of_players - no_of_wolves;

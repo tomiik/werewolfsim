@@ -1,10 +1,12 @@
 "use strict";
+var readlineSync = require('readline-sync');
 var gameMaster_1 = require("./gameMaster");
 var enum_1 = require("./enum");
-var no_of_players = 20;
+var no_of_players = readlineSync.question("Please input the number of players. >");
+;
+var games = readlineSync.question("Please input the number of games. >");
 var winner;
 var gamemaster;
-var games = 1000;
 for (var j = Math.ceil(no_of_players / 20); j < no_of_players / 2; j++) {
     var no_of_wolves = j;
     var no_of_villagers = no_of_players - no_of_wolves;
